@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Health Risk Assessment</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+    }
+    
+    .header {
+      background: #16213e;
+      padding: 15px 20px;
+      border-bottom: 2px solid #0f3460;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 22px;
+      color: #00adb5;
+    }
+    
+    .wrapper {
+      max-width: 950px;
+      margin: 40px auto;
+      padding: 0 25px;
+    }
+    
+    .intro {
+      margin-bottom: 35px;
+    }
+    
+    .intro p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #bbb;
+    }
+    
+    .main-grid {
+      display: grid;
+      grid-template-columns: 58% 40%;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    
+    @media (max-width: 850px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .box {
+      background: #16213e;
+      padding: 25px;
+      border-radius: 8px;
+      border: 1px solid #0f3460;
+    }
+    
+    .box h2 {
+      margin-top: 0;
+      color: #00adb5;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+    
+    .form-row.two {
+      grid-template-columns: 1fr 1fr;
+    }
+    
+    @media (max-width: 650px) {
+      .form-row, .form-row.two {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .field {
+      margin-bottom: 18px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #aaa;
+      font-weight: 500;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      background: #0f3460;
+      border: 1px solid #1a4d7a;
+      border-radius: 5px;
+      color: #eee;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #00adb5;
+    }
+    
+    .note {
+      font-size: 11px;
+      color: #777;
+      margin-top: 4px;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+    
+    button {
+      padding: 11px 22px;
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .btn-primary {
+      background: #00adb5;
+      color: #1a1a2e;
+    }
+    
+    .btn-primary:hover {
+      background: #00c4cc;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: #aaa;
+      border: 1px solid #0f3460;
+    }
+    
+    .btn-secondary:hover {
+      border-color: #00adb5;
+      color: #00adb5;
+    }
+    
+    .result {
+      background: #0f3460;
+      padding: 18px;
+      border-radius: 6px;
+      margin-top: 20px;
+      min-height: 70px;
+      color: #bbb;
+      line-height: 1.6;
+    }
+    
+    .result.empty {
+      color: #777;
+      font-style: italic;
+    }
+    
+    .risk-label {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    
+    .risk-low { color: #4ade80; }
+    .risk-medium { color: #fbbf24; }
+    .risk-high { color: #f87171; }
+    
+    .error-text {
+      color: #f87171;
+      font-size: 13px;
+    }
+    
+    .warning {
+      background: rgba(251, 191, 36, 0.1);
+      border-left: 3px solid #fbbf24;
+      padding: 12px 15px;
+      margin-top: 15px;
+      font-size: 12px;
+      color: #fbbf24;
+      border-radius: 4px;
+    }
+    
+    .info-cards {
+      display: grid;
+      gap: 20px;
+    }
+    
+    .info-card {
+      background: #16213e;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #0f3460;
+    }
+    
+    .info-card h3 {
+      margin-top: 0;
+      color: #00adb5;
+      font-size: 17px;
+    }
+    
+    .info-card p {
+      color: #bbb;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    
+    .stats {
+      display: flex;
+      gap: 15px;
+      margin: 25px 0;
+    }
+    
+    .stat-box {
+      flex: 1;
+      background: #0f3460;
+      padding: 15px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    
+    .stat-box strong {
+      display: block;
+      color: #00adb5;
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+    
+    .stat-box span {
+      color: #888;
+      font-size: 12px;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #666;
+      font-size: 13px;
+      border-top: 1px solid #0f3460;
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>⚕️ Health Risk Calculator</h1>
+  </div>
+
+  <div class="wrapper">
+    <div class="intro">
+      <p>Quick health screening tool based on common risk factors. Fill in what you know and get an estimated risk assessment. This isn't medical advice—just a starting point for understanding your health profile.</p>
+      
+      <div class="stats">
+        <div class="stat-box">
+          <strong>Local Processing</strong>
+          <span>Data stays in your browser</span>
+        </div>
+        <div class="stat-box">
+          <strong>Quick Results</strong>
+          <span>Instant calculations</span>
+        </div>
+        <div class="stat-box">
+          <strong>Free to Use</strong>
+          <span>No signup needed</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="box">
+        <h2>Enter Your Info</h2>
+        <form id="healthForm">
+          <div class="form-row">
+            <div class="field">
+              <label>Age *</label>
+              <input type="number" id="age" min="1" max="120" placeholder="35">
+            </div>
+            <div class="field">
+              <label>Sex *</label>
+              <select id="sex">
+                <option value="">Choose</option>
+                <option value="F">Female</option>
+                <option value="M">Male</option>
+                <option value="O">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>BMI *</label>
+              <input type="number" id="bmi" step="0.1" min="10" max="60" placeholder="24.5">
+              <div class="note">Body Mass Index</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label>Blood Pressure</label>
+              <input type="number" id="systolic" placeholder="120">
+              <div class="note">Systolic (top number)</div>
+            </div>
+            <div class="field">
+              <label>Diastolic</label>
+              <input type="number" id="diastolic" placeholder="80">
+              <div class="note">Bottom number</div>
+            </div>
+            <div class="field">
+              <label>Blood Sugar</label>
+              <input type="number" id="glucose" placeholder="95">
+              <div class="note">Fasting mg/dL</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Symptoms (if any)</label>
+            <input type="text" id="symptoms" placeholder="fatigue, headaches, etc.">
+          </div>
+
+          <div class="form-row two">
+            <div class="field">
+              <label>Family History</label>
+              <select id="familyHistory">
+                <option value="none">None</option>
+                <option value="distant">Distant relatives</option>
+                <option value="close">Parents/siblings</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Smoking</label>
+              <select id="smoking">
+                <option value="never">Never</option>
+                <option value="former">Former smoker</option>
+                <option value="current">Current smoker</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button type="submit" class="btn-primary">Calculate Risk</button>
+            <button type="button" class="btn-secondary" id="clearBtn">Clear Form</button>
+          </div>
+
+          <div class="result empty" id="resultBox">
+            Enter your information and click Calculate to see results
+          </div>
+
+          <div class="warning">
+            <strong>Heads up:</strong> This is a screening tool, not a diagnosis. Always talk to a real doctor about health concerns.
+          </div>
+        </form>
+      </div>
+
+      <div>
+        <div class="info-cards">
+          <div class="info-card">
+            <h3>What This Does</h3>
+            <p>Estimates general health risk using basic metrics like age, BMI, blood pressure, and lifestyle factors. It's meant to give you a rough idea, not replace actual medical evaluation.</p>
+          </div>
+
+          <div class="info-card">
+            <h3>How to Use</h3>
+            <p>Fill in the required fields (marked with *). The optional fields help improve accuracy. Results show as Low, Medium, or High risk with key factors that influenced the assessment.</p>
+          </div>
+
+          <div class="info-card">
+            <h3>Your Privacy</h3>
+            <p>Everything runs in your browser. No data is sent anywhere or saved. Refresh the page and it's gone.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Health Risk Calculator | Educational purposes only
+  </footer>
+
+  <script>
+    const form = document.getElementById('healthForm');
+    const resultBox = document.getElementById('resultBox');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function calcRisk(data) {
+      let points = 0;
+      let factors = [];
+
+      // age scoring
+      if (data.age > 65) {
+        points += 2.5;
+        factors.push('age over 65');
+      } else if (data.age > 50) {
+        points += 1.2;
+        factors.push('age over 50');
+      }
+
+      // BMI check
+      if (data.bmi > 30) {
+        points += 2;
+        factors.push('high BMI');
+      } else if (data.bmi > 25) {
+        points += 0.8;
+        factors.push('elevated BMI');
+      }
+
+      // blood pressure
+      if (data.systolic >= 140) {
+        points += 1.8;
+        factors.push('high blood pressure');
+      } else if (data.systolic >= 130) {
+        points += 0.9;
+        factors.push('elevated BP');
+      }
+
+      // glucose levels
+      if (data.glucose >= 126) {
+        points += 2.2;
+        factors.push('high blood sugar');
+      } else if (data.glucose >= 100) {
+        points += 1;
+        factors.push('prediabetic range');
+      }
+
+      // smoking impact
+      if (data.smoking === 'current') {
+        points += 2;
+        factors.push('current smoker');
+      } else if (data.smoking === 'former') {
+        points += 0.4;
+      }
+
+      // family history
+      if (data.familyHistory === 'close') {
+        points += 1.3;
+        factors.push('strong family history');
+      } else if (data.familyHistory === 'distant') {
+        points += 0.5;
+      }
+
+      // check for relevant symptoms
+      const symList = (data.symptoms || '').toLowerCase();
+      if (symList.includes('chest') || symList.includes('pain') || 
+          symList.includes('dizzy') || symList.includes('breath')) {
+        points += 1.5;
+        factors.push('concerning symptoms');
+      }
+
+      // determine risk level
+      let level, cssClass, advice;
+      
+      if (points >= 6) {
+        level = 'High';
+        cssClass = 'risk-high';
+        advice = 'Schedule a checkup soon. Several risk factors detected.';
+      } else if (points >= 3) {
+        level = 'Medium';
+        cssClass = 'risk-medium';
+        advice = 'Keep monitoring your health. Consider lifestyle improvements.';
+      } else {
+        level = 'Low';
+        cssClass = 'risk-low';
+        advice = 'Looking good! Keep up healthy habits.';
+      }
+
+      return { level, cssClass, factors, advice, score: points.toFixed(1) };
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const age = parseInt(document.getElementById('age').value);
+      const sex = document.getElementById('sex').value;
+      const bmi = parseFloat(document.getElementById('bmi').value);
+      const systolic = parseInt(document.getElementById('systolic').value) || 0;
+      const diastolic = parseInt(document.getElementById('diastolic').value) || 0;
+      const glucose = parseInt(document.getElementById('glucose').value) || 0;
+      const symptoms = document.getElementById('symptoms').value;
+      const familyHistory = document.getElementById('familyHistory').value;
+      const smoking = document.getElementById('smoking').value;
+
+      // basic validation
+      if (!age || !sex || !bmi) {
+        resultBox.className = 'result';
+        resultBox.innerHTML = '<span class="error-text">Please fill in Age, Sex, and BMI (marked with *)</span>';
+        return;
+      }
+
+      if (age < 1 || age > 120) {
+        resultBox.className = 'result';
+        resultBox.innerHTML = '<span class="error-text">Age should be between 1 and 120</span>';
+        return;
+      }
+
+      if (bmi < 10 || bmi > 60) {
+        resultBox.className = 'result';
+        resultBox.innerHTML = '<span class="error-text">BMI seems off. Should be between 10 and 60</span>';
+        return;
+      }
+
+      const data = { age, sex, bmi, systolic, diastolic, glucose, symptoms, familyHistory, smoking };
+      const result = calcRisk(data);
+
+      const factorList = result.factors.length > 0 
+        ? result.factors.join(', ') 
+        : 'none identified';
+
+      resultBox.className = 'result';
+      resultBox.innerHTML = `
+        <div style="margin-bottom: 12px;">
+          <strong>Risk Level:</strong> <span class="risk-label ${result.cssClass}">${result.level}</span>
+          <span style="color: #888; font-size: 13px;"> (score: ${result.score})</span>
+        </div>
+        <div style="margin-bottom: 10px; font-size: 14px;">
+          <strong>Key factors:</strong> ${factorList}
+        </div>
+        <div style="font-size: 14px; color: #aaa;">
+          ${result.advice}
+        </div>
+      `;
+    });
+
+    clearBtn.addEventListener('click', () => {
+      form.reset();
+      resultBox.className = 'result empty';
+      resultBox.textContent = 'Enter your information and click Calculate to see results';
+    });
+  </script>
+</body>
+</html>
